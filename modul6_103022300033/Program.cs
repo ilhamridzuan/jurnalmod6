@@ -9,6 +9,8 @@ public class SayaTubeVideo
 
     public SayaTubeVideo(string title)
     {
+        if (string.IsNullOrEmpty(title)) throw new ArgumentException("Judul video tidak boleh null atau kosong");
+        if (title.Length > 200) throw new ArgumentException("Judul video tidak boleh lebih dari 200 karakter.");
         Random random = new Random();
         this.id = random.Next(10000, 99999);
         this.title = title;
@@ -17,7 +19,14 @@ public class SayaTubeVideo
 
     public void IncreasePlayCount(int count)
     {
-        playCount += count;
+        if (count < 0) throw new ArgumentException("Jumlah play count tidak boleh negatif.");
+        if (count > 25000000) throw new ArgumentException("Jumlah play count maksimal adalah 25.000.000");
+
+        checked
+        {
+            if (playCount + count > int.MaxValue) throw new OverflowException("Total play count melebihi batas maksimum integer.");
+            this.playCount += count;
+        }
     }
 
     public void PrintVideoDetails()
@@ -46,6 +55,8 @@ public class SayaTubeUser
 
     public SayaTubeUser(string username)
     {
+        if (string.IsNullOrEmpty(username)) throw new ArgumentException("Username tidak boleh null atau kosong. ");
+        if (username.Length > 100) throw new ArgumentException("Username tidak boleh lebih dari 100 karakter.");
         Random randomUser = new Random();
         this.id = randomUser.Next(10000, 99999);
         this.uploadedVideos = new List<SayaTubeVideo>();
@@ -64,6 +75,8 @@ public class SayaTubeUser
 
     public void AddVideo(SayaTubeVideo video)
     {
+        if (video == null) throw new ArgumentException("Video tidak boleh null");
+        if (uploadedVideos.Count >= 8) throw new InvalidOperationException("Maksimal hanya dapat menambahkan 8 video.");
         uploadedVideos.Add(video);
     }
 
